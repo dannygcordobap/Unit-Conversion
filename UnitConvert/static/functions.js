@@ -67,14 +67,103 @@ function validateInput(value) {
     }
 }
 
+function unitOrders() {
+    imperialUnits = [
+        'teaspoon',
+        'tablespoon',
+        'fluid ounce',
+        'cup',
+        'pint',
+        'quart',
+        'gallon',
+        'ounce',
+        'pound'
+    ];
+
+    metricUnits = [
+        'gram',
+        'kilogram',
+        'milliliter',
+        'liter'
+    ];
+
+    return [imperialUnits, metricUnits];
+}
+
+function sameSystem(startUnit, endUnit) {
+    var imperialUnits = unitOrders[0];
+    
+    if (imperialUnits.includes(startUnit)) {
+        if (imperialUnits.includes(endUnit)) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        if (imperialUnits.includes(endUnit)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+
+function isImperial(unit) {
+    var imperialUnits = unitOrders[0];
+
+    if (imperialUnits.includes(unit)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function unitConversions() {
+    var increasingConversions = {
+        'teaspoon' : ['tablespoon', 1/3],
+        'tablespoon' : ['fluid ounce', 1/2],
+        'fluid ounce' : ['cup', 1/8],
+        'cup' : ['pint', 1/2],
+        'pint' : ['quart', 1/2],
+        'quart' : ['gallon', 1/4],
+        'ounce' : ['pound', 1/16],
+        'milliliter' : ['liter', 1/1000],
+        'gram' : ['kilogram', 1/1000]
+    };
+
+    return increasingConversions;
+}
+
+function conversionRate(currentUnit, goalUnit) {
+    var unitConversion = unitConversions();
+
+    if (currentUnit == goalUnit) {
+        return 1;
+    } else {
+        let nextUnit = unitConversion[currentUnit][0];
+        let cumulativeRate = unitConversion[currentUnit][1];
+        return conversionRate(nextUnit, goalUnit) * cumulativeRate;
+    }
+}
+
+function buildString(amount, startUnit, endUnit, rate) {
+    var result = (amount * rate);
+    var output = amount + " " + startUnit + "s ";
+    output += "is equivalent to " + result + " " + endUnit + ".";
+    return output;
+}
+
 function convert() {
     var startUnit = document.getElementById("startUnit").value.toLowerCase();
     var endUnit = document.getElementById("endUnit").value.toLowerCase();
     var result = document.getElementById("result");
+    var amount = parseFloat(document.getElementById("quantity").value);
     if (validateInput(startUnit)) {
         if (validateInput(endUnit)) {
             if (validConversion(startUnit, endUnit)) {
-                result.textContent = "Calculated";
+                var rate = conversionRate(startUnit, endUnit);
+                output = buildString(amount, startUnit, endUnit, rate);
+                result.textContent = output;
             } else {
                 result.textContent = "Invalid conversion";
             }
