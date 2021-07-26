@@ -67,8 +67,8 @@ function validateInput(value) {
     }
 }
 
-function unitOrders() {
-    imperialUnits = [
+function imperialUnits() {
+    var units = [
         'teaspoon',
         'tablespoon',
         'fluid ounce',
@@ -77,30 +77,43 @@ function unitOrders() {
         'quart',
         'gallon',
         'ounce',
-        'pound'
+        'pound',
     ];
 
-    metricUnits = [
+    return units;
+}
+
+function unitOrders() {
+    var unitOrder = [
+        'teaspoon',
+        'tablespoon',
+        'fluid ounce',
+        'cup',
+        'pint',
+        'quart',
+        'gallon',
+        'ounce',
+        'pound',
         'gram',
         'kilogram',
         'milliliter',
         'liter'
     ];
 
-    return [imperialUnits, metricUnits];
+    return unitOrder;
 }
 
 function sameSystem(startUnit, endUnit) {
-    var imperialUnits = unitOrders[0];
+    var imperialUnit = imperialUnits();
     
-    if (imperialUnits.includes(startUnit)) {
-        if (imperialUnits.includes(endUnit)) {
+    if (imperialUnit.includes(startUnit)) {
+        if (imperialUnit.includes(endUnit)) {
             return true;
         } else {
             return false;
         }
     } else {
-        if (imperialUnits.includes(endUnit)) {
+        if (imperialUnit.includes(endUnit)) {
             return false;
         } else {
             return true;
@@ -109,9 +122,9 @@ function sameSystem(startUnit, endUnit) {
 }
 
 function isImperial(unit) {
-    var imperialUnits = unitOrders[0];
+    var imperialUnit = imperialUnits()
 
-    if (imperialUnits.includes(unit)) {
+    if (imperialUnit.includes(unit)) {
         return true;
     } else {
         return false;
@@ -146,10 +159,21 @@ function conversionRate(currentUnit, goalUnit) {
     }
 }
 
-function buildString(amount, startUnit, endUnit, rate) {
+function fixedConversionRate(startUnit, endUnit) {
+    let startValue = unitOrders().findIndex(startUnit);
+    let endValue = unitOrder().findIndex(endUnit);
+    if (startValue > endValue) {
+        return (1 / conversionRate(endUnit, startUnit));
+    } else {
+        return conversionRate(startUnit, endUnit);
+    }
+}
+
+function buildString(amount, startUnit, endUnit) {
+    var rate = fixedConversionRate(startUnit, endUnit);
     var result = (amount * rate);
     var output = amount + " " + startUnit + "s ";
-    output += "is equivalent to " + result + " " + endUnit + ".";
+    output += "is equivalent to " + result + " " + endUnit + "s.";
     return output;
 }
 
@@ -161,9 +185,7 @@ function convert() {
     if (validateInput(startUnit)) {
         if (validateInput(endUnit)) {
             if (validConversion(startUnit, endUnit)) {
-                var rate = conversionRate(startUnit, endUnit);
-                output = buildString(amount, startUnit, endUnit, rate);
-                result.textContent = output;
+                result.textContent = buildString(amount, startUnit, endUnit);
             } else {
                 result.textContent = "Invalid conversion";
             }
