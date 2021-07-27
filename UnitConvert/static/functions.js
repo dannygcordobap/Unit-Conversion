@@ -160,12 +160,18 @@ function conversionRate(currentUnit, goalUnit) {
 }
 
 function fixedConversionRate(startUnit, endUnit) {
-    let startValue = unitOrders().findIndex(startUnit);
-    let endValue = unitOrder().findIndex(endUnit);
-    if (startValue > endValue) {
-        return (1 / conversionRate(endUnit, startUnit));
+    var unitOrder = unitOrders();
+    if (sameSystem(startUnit, endUnit)) {
+        let startValue = unitOrder.findIndex(startUnit);
+        let endValue = unitOrder.findIndex(endUnit);
+        if (startValue <= endValue) {
+            return conversionRate(startUnit, endUnit);
+        } else {
+            return (1 / conversionRate(endUnit, startUnit));
+        }
     } else {
-        return conversionRate(startUnit, endUnit);
+        return 0;
+        //special conversions
     }
 }
 
@@ -173,7 +179,7 @@ function buildString(amount, startUnit, endUnit) {
     var rate = fixedConversionRate(startUnit, endUnit);
     var result = (amount * rate);
     var output = amount + " " + startUnit + "s ";
-    output += "is equivalent to " + result + " " + endUnit + "s.";
+    output += "is equivalent to " + result + " " + endUnit + ".";
     return output;
 }
 
@@ -196,3 +202,5 @@ function convert() {
         result.textContent = "Invalid start unit";
     }
 }
+
+console.log(fixedConversionRate('fluid ounce', 'teaspoon'))
