@@ -31,19 +31,19 @@ function clickFill(startEnd, value) {
 
 function invalidConversionDict() {
     var invalidConversions = {
-        'cup' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'teaspoon' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'tablespoon' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'fluid ounce' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'pint' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'quart' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'gallon' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'milliliters' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'liters' : ['grams', 'kilograms', 'ounce', 'pound'],
-        'ounce' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon'],
-        'pound' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon'],
-        'grams' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon'],
-        'kilograms' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon']
+        'cup' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'teaspoon' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'tablespoon' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'fluid ounce' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'pint' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'quart' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'gallon' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'milliliter' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'liter' : ['gram', 'kilogram', 'ounce', 'pound'],
+        'ounce' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon', 'milliliter', 'liter'],
+        'pound' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon', 'milliliter', 'liter'],
+        'gram' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon', 'milliliter', 'liter'],
+        'kilogram' : ['cup', 'teaspoon', 'tablespoon', 'fluid ounce', 'pint', 'quart', 'gallon', 'milliliter', 'liter']
     };
 
     return invalidConversions;
@@ -68,7 +68,7 @@ function validateInput(value) {
 }
 
 function imperialUnits() {
-    var units = [
+    return [
         'teaspoon',
         'tablespoon',
         'fluid ounce',
@@ -79,12 +79,10 @@ function imperialUnits() {
         'ounce',
         'pound',
     ];
-
-    return units;
 }
 
 function unitOrders() {
-    var unitOrder = [
+    return [
         'teaspoon',
         'tablespoon',
         'fluid ounce',
@@ -99,8 +97,6 @@ function unitOrders() {
         'milliliter',
         'liter'
     ];
-
-    return unitOrder;
 }
 
 function sameSystem(startUnit, endUnit) {
@@ -132,7 +128,7 @@ function isImperial(unit) {
 }
 
 function unitConversions() {
-    var increasingConversions = {
+    return {
         'teaspoon' : ['tablespoon', 1/3],
         'tablespoon' : ['fluid ounce', 1/2],
         'fluid ounce' : ['cup', 1/8],
@@ -143,8 +139,6 @@ function unitConversions() {
         'milliliter' : ['liter', 1/1000],
         'gram' : ['kilogram', 1/1000]
     };
-
-    return increasingConversions;
 }
 
 function conversionRate(currentUnit, goalUnit) {
@@ -160,14 +154,13 @@ function conversionRate(currentUnit, goalUnit) {
 }
 
 function fixedConversionRate(startUnit, endUnit) {
-    var unitOrder = unitOrders();
     if (sameSystem(startUnit, endUnit)) {
-        let startValue = unitOrder.findIndex(startUnit);
-        let endValue = unitOrder.findIndex(endUnit);
+        let startValue = unitOrders().indexOf(startUnit);
+        let endValue = unitOrders().indexOf(endUnit);
         if (startValue <= endValue) {
             return conversionRate(startUnit, endUnit);
         } else {
-            return (1 / conversionRate(endUnit, startUnit));
+            return 1/conversionRate(endUnit, startUnit);
         }
     } else {
         return 0;
@@ -202,5 +195,3 @@ function convert() {
         result.textContent = "Invalid start unit";
     }
 }
-
-console.log(fixedConversionRate('fluid ounce', 'teaspoon'))

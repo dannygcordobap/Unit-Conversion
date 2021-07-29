@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask import render_template
 from . import index
 
 def create_app(test_config = None):
@@ -9,7 +10,6 @@ def create_app(test_config = None):
 
     app.config.from_mapping(
         SECRET_KEY = "dev",
-        DATABASE = os.path.join(app.instance_path, "dontwannado.sqlite"),
     )
 
     if test_config is None:
@@ -31,6 +31,6 @@ def create_app(test_config = None):
 
     @app.route('/home')
     def home():
-        return "home"
+        return render_template('index.html')
 
     return app
