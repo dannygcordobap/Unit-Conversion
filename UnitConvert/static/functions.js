@@ -163,8 +163,33 @@ function fixedConversionRate(startUnit, endUnit) {
             return 1/conversionRate(endUnit, startUnit);
         }
     } else {
-        return 0;
-        //special conversions
+        return toDifferentSystem(startUnit, endUnit);
+    }
+}
+
+function complexConversionDict() {
+    return {
+        "ounce" : ["grams", 28.3495],
+        "fluid ounce" : ["milliliter", 29.574]
+    };
+}
+
+function toDifferentSystem(startUnit, endUnit) {
+    var firstRate = 1;
+    var secondRate = 1;
+    if (isImperial(startUnit)) {
+        // simplify with a function
+        if (validConversion(startUnit, "ounce")) {
+            firstRate = fixedConversionRate(startUnit, "ounce");
+            secondRate = fixedConversionRate("gram", endUnit);
+            return firstRate * secondRate * complexConversionDict()["ounce"][1];
+        } else if (validConversion(startUnit, "fluid ounce")) {
+            firstRate = fixedConversionRate(startUnit, "fluid ounce");
+            secondRate = fixedConversionRate("milliliter", endUnit);
+            return firstRate * secondRate * complexConversionDict()["fluid ounce"][1];
+        }
+    } else {
+        // Starting with metric
     }
 }
 
