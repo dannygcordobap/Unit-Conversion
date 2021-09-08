@@ -169,8 +169,8 @@ function fixedConversionRate(startUnit, endUnit) {
 
 function complexConversionDict() {
     return {
-        "ounce" : ["grams", 28.3495],
-        "fluid ounce" : ["milliliter", 29.574]
+        "ounce" : ["gram", 28.3495],
+        "fluid ounce" : ["milliliter", 29.574],
     };
 }
 
@@ -183,13 +183,21 @@ function toDifferentSystem(startUnit, endUnit) {
             firstRate = fixedConversionRate(startUnit, "ounce");
             secondRate = fixedConversionRate("gram", endUnit);
             return firstRate * secondRate * complexConversionDict()["ounce"][1];
-        } else if (validConversion(startUnit, "fluid ounce")) {
+        } else {
             firstRate = fixedConversionRate(startUnit, "fluid ounce");
             secondRate = fixedConversionRate("milliliter", endUnit);
             return firstRate * secondRate * complexConversionDict()["fluid ounce"][1];
         }
     } else {
-        // Starting with metric
+        if (validConversion(startUnit, "gram")) {
+            firstRate = fixedConversionRate(startUnit, "gram");
+            secondRate = fixedConversionRate("ounce", endUnit);
+            return firstRate * secondRate * (1/complexConversionDict()["ounce"][1]);
+        } else {
+            firstRate = fixedConversionRate(startUnit, "milliliter");
+            secondRate = fixedConversionRate("fluid ounce", endUnit);
+            return firstRate * secondRate * (1/complexConversionDict()["fluid ounce"][1]);
+        }
     }
 }
 
@@ -200,6 +208,8 @@ function buildString(amount, startUnit, endUnit) {
     output += "is equivalent to " + result + " " + endUnit + ".";
     return output;
 }
+
+
 
 function convert() {
     var startUnit = document.getElementById("startUnit").value.toLowerCase();
